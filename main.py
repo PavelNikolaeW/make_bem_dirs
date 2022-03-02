@@ -1,8 +1,7 @@
+from sys import argv 
 import re
 import os
-from pprint import pprint
 
-path = r"C:\Users\User\Desktop\dev\server\index.html"
 page_dir = os.path.join(os.path.abspath(os.curdir), 'pages')
 block_dir = os.path.join(os.path.abspath(os.curdir), 'block')
 IMPORTS = set()
@@ -63,7 +62,7 @@ def make_imports_file(path):
             imp = list(IMPORTS)
             block = ''
             oldblock = ''
-            for n in sorted(imp):
+            for n in sorted(imp, reverse=True):
                 slesh = n.find(os.sep, 22)
                 block = n[22: slesh]
                 if (oldblock != block):
@@ -74,6 +73,19 @@ def make_imports_file(path):
 
 
 if __name__ == '__main__':
+    path = ''
+    if (len(argv) == 1):
+        if os.path.exists('index.php'):
+            path = 'index.php'
+        elif os.path.exists('index.html'):
+            path = 'index.html'
+    elif (len(argv) > 1):
+        if os.path.exists(argv[1]):
+            path = argv[1]
+        elif os.path.exists(argv[1] + '.php'):
+            path = argv[1] + '.php'
+        elif os.path.exists(argv[1] + '.html'):
+            path = argv[1] + '.html'
     classes = parse(path)
     make_dir("blocks")
     make_dirs(classes)
