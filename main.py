@@ -2,8 +2,8 @@ from sys import argv
 import re
 import os
 
-page_dir = os.path.join(os.path.abspath(os.curdir), 'pages')
-block_dir = os.path.join(os.path.abspath(os.curdir), 'block')
+page_dir = os.path.join(os.curdir, 'pages')
+block_dir = os.path.join(os.curdir, 'blocks')
 IMPORTS = set()
 
 def parse(path):
@@ -49,7 +49,7 @@ def make_dir(path):
 def make_file_css(path, selector):
     if (selector != ""):
         dir_file = f"{path}.css"
-        IMPORTS.add(f"@import url({os.path.join(os.pardir, dir_file)});\n")
+        IMPORTS.add(f"@import url({os.path.join(os.pardir, dir_file[2:-1])});\n")
         css_selector = f".{selector} {{\n\t\n}}"
         if not os.path.exists(dir_file):
             with open(dir_file, "w+", encoding="utf-8") as f:
@@ -75,9 +75,9 @@ def make_imports_file(path):
 f"""
 /*--- NO BEM BLOCKS ---*/
 
-@import url({os.pardir}/vendor/normalize.css');
-@import url({os.pardir}/fonts/fonts.css');
-@import url({os.pardir}/variables/colors.css');
+@import url({os.pardir}/vendor/normalize.css);
+@import url({os.pardir}/fonts/fonts.css);
+@import url({os.pardir}/variables/colors.css);
 """)
 
 
