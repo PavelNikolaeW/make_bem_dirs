@@ -56,6 +56,7 @@ def make_file_css(path, selector):
 
 def make_imports_file(path):
     if (len(IMPORTS)):
+        IMPORTS.add(f"@import url({os.path.join(os.pardir, 'vendor', 'normalize.css')});\n@import url({os.path.join(os.pardir, 'fonts', 'fonts.css')});\n@import url({os.path.join(os.pardir, 'variables', 'colors.css')});\n")
         page_name = os.path.splitext(os.path.basename(path))[0]
         page_path = os.path.join(page_dir, page_name + ".css")
         with open(page_path, "w", encoding="utf-8") as f:
@@ -63,13 +64,13 @@ def make_imports_file(path):
             block = ''
             oldblock = ''
             for n in sorted(imp, reverse=True):
-                slesh = n.find(os.sep, 22)
+                slesh = n.find(os.sep, 22, 38)
                 block = n[22: slesh]
                 if (oldblock != block):
                     s = f"\n/*--- {block.upper()} ---*/\n\n"
                     f.write(s)
                     oldblock = block
-                f.write(n)
+                f.write(n.replace(os.sep, "/", 15))
 
 
 if __name__ == '__main__':
