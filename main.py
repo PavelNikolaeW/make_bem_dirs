@@ -10,13 +10,14 @@ def parse(path):
     html = ''
     with open(path, "r", encoding="utf-8") as f:
         html = f.read()
-    matches = re.findall(r'class="(.*?)"', html)
-    return matches
+        matches = re.findall(r'class="(.*?)"', html)
+        return matches
 
 def make_dirs(classes):
+    make_dir(block_dir)
     for class_html in classes:
         for key in class_html.split(' '):
-            path = "blocks"
+            path = block_dir
             block_element = key.split('__')
             block_element_mod = key.split('_')
             if len(block_element) == 1 and len(block_element_mod) == 1:
@@ -56,7 +57,6 @@ def make_file_css(path, selector):
 
 def make_imports_file(path):
     if (len(IMPORTS)):
-        IMPORTS.add(f"@import url({os.path.join(os.pardir, 'vendor', 'normalize.css')});\n@import url({os.path.join(os.pardir, 'fonts', 'fonts.css')});\n@import url({os.path.join(os.pardir, 'variables', 'colors.css')});\n")
         page_name = os.path.splitext(os.path.basename(path))[0]
         page_path = os.path.join(page_dir, page_name + ".css")
         with open(page_path, "w", encoding="utf-8") as f:
@@ -64,13 +64,21 @@ def make_imports_file(path):
             block = ''
             oldblock = ''
             for n in sorted(imp, reverse=True):
-                slesh = n.find(os.sep, 22, 38)
+                slesh = n.find(os.sep, 22)
                 block = n[22: slesh]
                 if (oldblock != block):
                     s = f"\n/*--- {block.upper()} ---*/\n\n"
                     f.write(s)
                     oldblock = block
                 f.write(n.replace(os.sep, "/", 15))
+            f.write(
+f"""
+/*--- NO BEM BLOCKS ---*/
+
+@import url({os.pardir}/vendor/normalize.css');
+@import url({os.pardir}/fonts/fonts.css');
+@import url({os.pardir}/variables/colors.css');
+""")
 
 
 if __name__ == '__main__':
@@ -88,7 +96,6 @@ if __name__ == '__main__':
         elif os.path.exists(argv[1] + '.html'):
             path = argv[1] + '.html'
     classes = parse(path)
-    make_dir("blocks")
     make_dirs(classes)
     make_dir(page_dir)
     make_imports_file(path)
