@@ -49,7 +49,7 @@ def make_dir(path):
 def make_file_css(path, selector):
     if (selector != ""):
         dir_file = f"{path}.css"
-        IMPORTS.add(f"@import url({os.path.join(os.pardir, dir_file[2:-1])});\n")
+        IMPORTS.add(f"@import url({os.path.join(os.pardir, dir_file[2:])});\n")
         css_selector = f".{selector} {{\n\t\n}}"
         if not os.path.exists(dir_file):
             with open(dir_file, "w+", encoding="utf-8") as f:
