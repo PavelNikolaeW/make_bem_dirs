@@ -5,7 +5,13 @@ import os
 page_dir = os.path.join(os.curdir, 'pages')
 block_dir = os.path.join(os.curdir, 'blocks')
 IMPORTS = set()
+NO_BEM_BLOCKS = f"""
+/*--- NO BEM BLOCKS ---*/
 
+@import url({os.pardir}/vendor/normalize.css);
+@import url({os.pardir}/fonts/fonts.css);
+@import url({os.pardir}/variables/colors.css);
+"""
 def parse(path):
     html = ''
     with open(path, "r", encoding="utf-8") as f:
@@ -60,14 +66,7 @@ def make_imports_file(path):
         page_name = os.path.splitext(os.path.basename(path))[0]
         page_path = os.path.join(page_dir, page_name + ".css")
         with open(page_path, "w", encoding="utf-8") as f:
-            f.write(
-f"""
-/*--- NO BEM BLOCKS ---*/
-
-@import url({os.pardir}/vendor/normalize.css);
-@import url({os.pardir}/fonts/fonts.css);
-@import url({os.pardir}/variables/colors.css);
-""")
+            f.write(NO_BEM_BLOCKS)
             imp = list(IMPORTS)
             block = ''
             oldblock = ''
