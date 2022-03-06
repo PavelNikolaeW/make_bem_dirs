@@ -60,6 +60,14 @@ def make_imports_file(path):
         page_name = os.path.splitext(os.path.basename(path))[0]
         page_path = os.path.join(page_dir, page_name + ".css")
         with open(page_path, "w", encoding="utf-8") as f:
+            f.write(
+f"""
+/*--- NO BEM BLOCKS ---*/
+
+@import url({os.pardir}/vendor/normalize.css);
+@import url({os.pardir}/fonts/fonts.css);
+@import url({os.pardir}/variables/colors.css);
+""")
             imp = list(IMPORTS)
             block = ''
             oldblock = ''
@@ -71,14 +79,6 @@ def make_imports_file(path):
                     f.write(s)
                     oldblock = block
                 f.write(n.replace(os.sep, "/", 15))
-            f.write(
-f"""
-/*--- NO BEM BLOCKS ---*/
-
-@import url({os.pardir}/vendor/normalize.css);
-@import url({os.pardir}/fonts/fonts.css);
-@import url({os.pardir}/variables/colors.css);
-""")
 
 
 if __name__ == '__main__':
