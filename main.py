@@ -49,7 +49,7 @@ def make_dir(path):
         try:
             os.mkdir(path)
         except:
-            pass
+            print("FAIL make dir path = " + path)
 
 
 def make_file_css(path, selector):
