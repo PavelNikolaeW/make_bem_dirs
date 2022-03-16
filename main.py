@@ -71,8 +71,8 @@ def make_imports_file(path):
             block = ''
             oldblock = ''
             for n in sorted(imp, reverse=True):
-                slesh = n.find(os.sep, len(page_dir))
-                block = n[len(page_dir): slesh]
+                slesh = n.find(os.sep, 22)
+                block = n[22: slesh]
                 if (oldblock != block):
                     s = f"\n/*--- {block.upper()} ---*/\n\n"
                     f.write(s)
