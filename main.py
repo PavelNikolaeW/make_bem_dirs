@@ -2,8 +2,8 @@ from sys import argv
 import re
 import os
 
-page_dir = os.path.join(os.curdir, 'pages')	 # не менять
-block_dir = os.path.join(os.curdir, 'blocks')  # не менять
+page_dir = os.path.join(os.curdir, 'pages')
+block_dir = os.path.join(os.curdir, 'blocks')
 IMPORTS = set()
 NO_BEM_BLOCKS = f"""
 /*--- NO BEM BLOCKS ---*/
@@ -74,8 +74,8 @@ def make_imports_file(path):
 						block = ''
 						oldblock = ''
 						for n in sorted(imp, reverse=True):
-								slesh = n.find(os.sep, 22)
-								block = n[22: slesh]
+								slesh = n.find(os.sep, 14 + len(block_dir))
+								block = n[14 + len(block_dir): slesh]
 								if (oldblock != block):
 										s = f"\n/*--- {block.upper()} ---*/\n\n"
 										f.write(s)
@@ -97,8 +97,12 @@ if __name__ == '__main__':
 						path = argv[1] + '.php'
 				elif os.path.exists(argv[1] + '.html'):
 						path = argv[1] + '.html'
-		classes = parse(path)
-		make_dirs(classes)
-		make_dir(page_dir)
-		make_imports_file(path)
+		if (path != ''):
+				classes = parse(path)
+				make_dirs(classes)
+				make_dir(page_dir)
+				make_imports_file(path)
+		else:
+			print("i didn't find the file")
+
 
