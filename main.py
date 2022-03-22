@@ -65,6 +65,7 @@ def make_file_css(path, selector):
 								print("FAIL make dir path = " + dir_file)
 
 def make_imports_file(path):
+		make_dir(page_dir)
 		if (len(IMPORTS)):
 				page_name = os.path.splitext(os.path.basename(path))[0]
 				page_path = os.path.join(page_dir, page_name + ".css")
@@ -100,7 +101,6 @@ if __name__ == '__main__':
 		if (path != ''):
 				classes = parse(path)
 				make_dirs(classes)
-				make_dir(page_dir)
 				make_imports_file(path)
 		else:
 			print("i didn't find the file")
