@@ -125,8 +125,6 @@ def change_local_var(var, new_val, add=False, remove=False):
 				for line in new_env:
 						print(line, file=f)
 
-def add_class(classes):
-		change_local_var('classes', classes, add=True)
 
 if __name__ == '__main__':
 		parser = createParser()
