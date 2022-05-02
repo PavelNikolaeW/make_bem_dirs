@@ -6,7 +6,7 @@ usage: main.py [-h] [-p SET_DIR_PAGES] [-b SET_DIR_BLOCKS] [-r RESET] [-f FILE] 
 options:
   -h, --help            show this help message and exit
   -p SET_DIR_PAGES, --set-dir-pages SET_DIR_PAGES
-                        set directory for page.css
+  set directory for page.css
   -b SET_DIR_BLOCKS, --set-dir-blocks SET_DIR_BLOCKS
                         set directory for bem blocks
   -r RESET, --reset RESET
