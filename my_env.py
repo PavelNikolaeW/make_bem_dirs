@@ -1,4 +1,5 @@
-page_dir = 'PAGESS'
+page_dir = 'pages'
 block_dir = 'blocks'
 classes = ''
 imports = ''
+file = 'index.html'
