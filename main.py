@@ -1,9 +1,28 @@
 from sys import argv 
+import argparse
 import re
 import os
+import my_env
 
-page_dir = os.path.join(os.curdir, 'pages')
-block_dir = os.path.join(os.curdir, 'blocks')
+
+def createParser ():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--set-dir-pages', default='', help="set directory for page.css")
+    parser.add_argument('-b', '--set-dir-blocks', default='', help='set directory for bem blocks')
+    parser.add_argument('-r', '--reset', type=bool, default=False, help='set catalog for <pages> pages and for blocks <blocks>')
+    parser.add_argument('-f', '--file', default='index.html', help="file with markup")
+    parser.add_argument('-a', '--add-class', default='', nargs="+", help='If there is no class in the html markup, but it needs to be included, it needs to be added to the local list')
+    parser.add_argument('-d', '--remove-class', help='remove class from local list', nargs="+")
+    parser.add_argument('--remove-import', help='remove additional files', nargs="+")
+    parser.add_argument('--add-import', help='add additional files', nargs="+")
+    parser.add_argument('-s', '--show', help='show local wariable', type=bool, default=False)
+    return parser
+
+
+
+page_dir = my_env.page_dir
+block_dir = my_env.block_dir
+ENV = 'my_env.py'
 IMPORTS = set()
 NO_BEM_BLOCKS = f"""
 /*--- NO BEM BLOCKS ---*/
@@ -64,6 +83,7 @@ def make_file_css(path, selector):
 						except:
 								print("FAIL make dir path = " + dir_file)
 
+
 def make_imports_file(path):
 		make_dir(page_dir)
 		if (len(IMPORTS)):
@@ -83,26 +103,54 @@ def make_imports_file(path):
 										oldblock = block
 								f.write(n.replace(os.sep, "/", 15))
 
+def change_local_var(var, new_val, add=False, remove=False):
+		new_env = []
+		with open(ENV, 'r', encoding='utf-8') as f:
+				line = f.readline()
+				while line:
+						key, val = line.split(' = ')
+						if key == var:
+								if add:
+										val = set(val.strip("'\n ").split(' ') + new_val)
+										val = f"'{' '.join(list(val))}'"
+								elif remove:
+										val = set(val.strip("'\n ").split(' ')) - set(new_val)
+										val = f"'{' '.join(list(val))}'"
+								else:
+										val = f"'{new_val}'"
+								print(f"variable <{var}> set in {val}")
+						new_env.append(f'{key} = {val.strip()}')
+						line = f.readline()
+		with open(ENV, 'w', encoding='utf-8') as f:
+				for line in new_env:
+						print(line, file=f)
+
+def add_class(classes):
+		change_local_var('classes', classes, add=True)
 
 if __name__ == '__main__':
-		path = ''
-		if (len(argv) == 1):
-				if os.path.exists('index.php'):
-						path = 'index.php'
-				elif os.path.exists('index.html'):
-						path = 'index.html'
-		elif (len(argv) > 1):
-				if os.path.exists(argv[1]):
-						path = argv[1]
-				elif os.path.exists(argv[1] + '.php'):
-						path = argv[1] + '.php'
-				elif os.path.exists(argv[1] + '.html'):
-						path = argv[1] + '.html'
-		if (path != ''):
-				classes = parse(path)
-				make_dirs(classes)
-				make_imports_file(path)
-		else:
-			print("i didn't find the file")
-
-
+		parser = createParser()
+		namespace = parser.parse_args(argv[1:])
+		if namespace.add_class:
+				change_local_var('classes', namespace.add_class, add=True)
+		if namespace.remove_class:
+				change_local_var('classes', namespace.remove_class, remove=True)
+		if namespace.add_import:
+				change_local_var('imports', namespace.add_import, add=True)
+		if namespace.remove_import:
+				change_local_var('imports', namespace.remove_import, remove=True)
+		if namespace.reset:
+				change_local_var('page_dir', 'pages')
+				change_local_var('block_dir', 'blocks')
+		if namespace.show:
+				with open(ENV, 'r') as f:
+						print(f.read())
+		if namespace.set_dir_pages != '':
+				change_local_var('page_dir', namespace.set_dir_pages)
+		if namespace.set_dir_blocks != '':
+				change_local_var('block_dir', namespace.set_dir_blocks)
+		classes = parse(namespace.file) + my_env.classes.split(' ')
+		for path in my_env.imports.split(' '):
+				IMPORTS.add(f"@import url({path});\n")
+		make_dirs(classes)
+		make_imports_file(namespace.file)
